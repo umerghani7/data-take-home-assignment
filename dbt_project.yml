@@ -18,6 +18,8 @@ clean-targets:
 
 models:
   hometask:
+    mart:
+      +materialized: table
     stg:
       +materialized: view
 

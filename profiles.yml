@@ -1,7 +1,10 @@
 hometask:
+  target: dev
   outputs:
     dev:
-      type: duckdb
-      path: dbt.duckdb
-  target: dev
-  
+      type: bigquery
+      method: service-account
+      project: testing-project-454720
+      dataset: testing_datalake
+      threads: 4 # Must be a value of 1 or greater
+      keyfile: /Users/umer.ghani/Documents/data-take-home-assignment/service_account.json

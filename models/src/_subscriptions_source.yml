@@ -1,0 +1,132 @@
+version: 2
+
+sources:
+  - name: subscriptions
+    description: >
+      test
+    database: raw-subscriptions
+
+    freshness:
+      warn_after: {count: 1, period: hour}
+      error_after: {count: 2, period: hour}
+    loaded_at_field: updated_at
+
+    tags: # tags applied to all source tables in this schema
+      - "subscriptions"
+      - "hourly"
+      - "source"
+
+    tables:
+      - name: raw_subscriptions
+        description: >
+          Core bet legs table for Arizona. A straight/single bet will have one record, while parlays/teasers will have multiple records.
+          This table is one row per bet leg, representing the most recent updates of a given bet leg.
+        tags: ["edgebook_sportsbook"]
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ordinal >= 0
+        columns:
+          - name: id
+            description: Primary key representative of a bet leg.
+            tests:
+              - unique
+              - not_null
+          - name: ordinal
+            description: Ordinal of the bet selection within the bet.
+            tests:
+              - not_null
+          - name: points
+            description: >
+              Spread for pointspread markets, O/U line for totals / props markets, 0 for moneyline markets.
+              Can be NULL.
+          - name: betworks_selection_legacy_data
+            description: JSON containing legacy Betworks market information. NULL for any Vegas/post-Betworks platform bets.
+          - name: market_selection_id
+            description: Foreign key that maps to the Vegas selections table, indicative of a selection on a given market. Be wary of different format for backfilled values.
+          - name: market
+            description: JSON containing a bunch of market information, e.g. Id, name, type, status, classification.
+            tests:
+              - not_null
+          - name: event
+            description: JSON containing a bunch of information pertaining to the event, e.g. Id, name, type, sport.
+          - name: vegas_bet_id
+            description: Bet Id Foreign Key that maps to the Primary Key (Id) in the vegas_bets source table.
+            tests:
+              - not_null
+          - name: inserted_at
+            description: Date & time in UTC when a given record was inserted into the source table.
+            tests:
+              - not_null
+          - name: updated_at
+            description: Date & time in UTC when a given record was updated in the source table.
+            tests:
+              - not_null
+          - name: market_liability_id
+            description: Market identifier for liability grouping.
+          - name: selection_liability_id
+            description: Selection identifier for liability grouping.
+          - name: odds_numerator
+            description: The fractional odds numerator of the specific bet leg.
+            tests:
+              - not_null
+          - name: odds_denominator
+            description: The fractional odds denominator of the specific bet leg.
+            tests:
+              - not_null
+          - name: market_selection_name
+            description: Human-readable market selection (e.g. Toronto Blue Jays -1.5, Seattle Kraken, Over 8.5).
+            tests:
+              - not_null
+          - name: market_selection_type
+            description: >
+              Human-readable market selection type (e.g., and corresponding to above market_selection_name examples,
+              home_spread, home_moneyline, under)
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['home_moneyline', 'away_moneyline', 'home_spread', 'away_spread', 'draw', 'exactly', 'list', 'over', 'under']
+          - name: market_selection_status
+            description: The status of the specific selection for the market.
+          - name: market_classification
+            description: The classification of the market, e.g. main, promo, future. Some of these values are null.
+            tests:
+              - accepted_values:
+                  values: ['main', 'game_prop', 'player_prop', 'future', 'promo']
+          - name: participant
+            description: JSON containing information about the selected participant (e.g. Id, Name). Can be NULL.
+          - name: outcome
+            description: >
+              The outcome of the leg. Open legs will have a pending outcome.
+              These values slightly differ from outcome values in the vegas_bets source table.
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['dead_heat', 'loss', 'pending', 'push', 'unavailable', 'void', 'win']
+          - name: in_play
+            description: >
+              Boolean. True if the bet leg was made in-play / is a live bet leg. Worth noting that the inclusion of a
+              single in-play leg in a multi-leg results in the overall bet being considered live/in-play.
+            tests:
+              - not_null
+          - name: line_type_modifier
+            description: >
+              Line type modifier of the leg. Used to describe under what condition a bet is considered no action.
+              Values are 'listed' and 'action'. Can be NULL.
+          - name: payout_factor_numerator
+            description: Selection result's payout factor numerator. Can be NULL for backfilled legs.
+          - name: payout_factor_denominator
+            description: Selection result's payout factor denominator. Can be NULL for backfilled legs.
+          - name: refund_factor_numerator
+            description: Selection result's refund factor numerator. Can be NULL for backfilled legs.
+          - name: refund_factor_denominator
+            description: Selection result's refund factor denominator. Can be NULL for backfilled legs.
+          - name: regraded
+            description: Boolean flagging if a bet leg was regraded. Bet legs are regraded in the event that an outcome is entered incorrectly.
+            tests:
+              - not_null
+          - name: taken_patron_max_to_win_cents
+            description: Can be NULL for backfilled legs.
+          - name: draft_leg_id
+            description: Appears to be another Id associated with the bet leg. Not unique. Can be NULL for backfilled legs.
+          - name: same_game_parlay_leg_id
+            description: Id that associates legs that are part of a same-game parlay. Not unique. Can be NULL.
