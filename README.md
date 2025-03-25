@@ -1,4 +1,4 @@
-# test Wave Analytics Engineer Take Home Assignment 
+# Wave Analytics Engineer Take Home Assignment 
 This repository contains a mock dataset designed for use in the technical assessments portion of the interview process. This Take Home Assignment is the property of Wave Financial Inc., is confidential and is not to be disseminated without Wave Financial Inc.'s prior consent.
 
 The assignment details, outlining what you need to do, were shared with you separately by Wave's recruitment team. This repository includes the dbt project scaffolding and raw data in CSV format. You are expected to use them to complete the assignment.
