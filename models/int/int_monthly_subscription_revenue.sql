@@ -25,7 +25,7 @@ WITH Base AS (
   s.subscription_cancelled_at,
 
 FROM {{ ref('stg_subscriptions') }} AS s
-LEFT JOIN {{ ref('raw_subscription_items') }}  AS si
+LEFT JOIN {{ ref('stg_subscription_items') }}  AS si
   ON s.item_id = CAST(si.id AS STRING)
 
 WHERE DATE(s.subscription_created_at) BETWEEN DATE('2024-01-01') AND DATE('2025-02-01')

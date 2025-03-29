@@ -20,17 +20,22 @@ models:
   hometask:
     +tags: ["surf"]
     mart:
+      +docs:
+        node_color: "orange"
       +materialized: table
       +tags: ["marts"] 
-    stg:
+    int:
+      +docs:
+        node_color: "purple"
       +materialized: view
-      +tags: ["staging"] 
+      +tags: ["intermediate"]
+    stg:
+      +docs:
+        node_color: "blue"
+      +materialized: view
+      +tags: ["staging"]
+    src:
+      +docs:
+        node_color: "green"
+      +tags: ["source"] 
 
-seeds:
-  hometask:
-    raw_subscriptions:
-      file_format: csv
-      delimiter: ","
-      quote: '"'
-      escape: '"'
-      null_padding: true

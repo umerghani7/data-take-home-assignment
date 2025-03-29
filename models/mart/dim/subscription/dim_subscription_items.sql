@@ -1,4 +1,4 @@
 SELECT 
 *
 FROM 
-{{ ref('stg_subscriptions_items') }}
+{{ ref('stg_subscription_items') }}
