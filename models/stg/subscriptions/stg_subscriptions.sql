@@ -19,7 +19,7 @@ WITH ranked_subs AS (
       PARTITION BY id
       ORDER BY created_at DESC  -- or current_term_start DESC if preferred
     ) AS row_num
-  FROM `testing-project-454720.testing_datalake.raw_subscriptions`
+  FROM {{ source('testing_datalake', 'raw_subscriptions') }}
 )
 
 SELECT *

@@ -1,7 +1,11 @@
-SELECT
-  d.month_start_date AS month
+WITH months AS (
+  SELECT DISTINCT month_start_date
+  FROM {{ ref('dim_dates') }}
+)
 
- ,SUM(monthly_revenue_usd) AS monthly_revenue_usd
+SELECT
+  m.month_start_date AS month
+  ,ROUND(SUM(sub.monthly_revenue_usd), 1) AS monthly_revenue_usd
 
   ,{{ dbt_utils.pivot(
         column = 'country',
@@ -28,9 +32,9 @@ SELECT
     }}
 
 
-FROM {{ ref('dim_dates') }} as d
+FROM months m
 LEFT JOIN {{ ref('int_monthly_subscription_revenue') }} AS sub
-ON DATE(d.month_start_date) = DATE(sub.month)
-WHERE d.month_start_date BETWEEN DATE('2024-01-29') AND DATE('2025-02-17') 
-GROUP BY month_start_date
-
+  ON DATE(m.month_start_date) = DATE(sub.month)
+WHERE m.month_start_date BETWEEN DATE('2024-01-29') AND DATE('2025-02-17') 
+GROUP BY m.month_start_date
+ORDER BY m.month_start_date

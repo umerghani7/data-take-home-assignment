@@ -18,8 +18,10 @@ clean-targets:
 
 models:
   hometask:
+    +tags: ["surf"]
     mart:
       +materialized: table
+      +tags: ["marts"] 
     stg:
       +materialized: view
       +tags: ["staging"] 

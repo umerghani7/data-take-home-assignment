@@ -1,0 +1,132 @@
+version: 2
+
+models:
+  - name: int_daily_active_subscriptions
+    description: >
+      test
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: subscription_created_at <= subscription_cancelled_at
+    columns:
+      - name: date_day
+        description: The given day. This along with 'id' serves as the PK.
+        tests:
+          - not_null
+      - name: id
+        description: The subscription id. This along with 'date_day' serves as the PK.
+        tests:
+          - not_null
+      - name: business_id
+        description: FK mapping to the stg_business table.
+        tests:
+          - not_null
+      - name: item_id
+        description: FK mapping to the stg_subscriptions_items table.
+        tests:
+          - not_null
+      - name: channel
+        description: The channel through which the subscription was purchased (e.g., Apple App Store, Google Play Store).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["web", "app_store", "play_store"]
+      - name: country
+        description: In which country the subscription was created, aligns with business country.
+        tests:
+          - accepted_values:
+              values: ["CA", "US", "NA"]
+      - name: currency_code
+        description: The currency code of the country.
+        tests:
+          - accepted_values:
+              values: ["CAD", "USD"]
+      - name: fx_rate_cad_usd
+        description: The currency exchance from CAD to USD.
+      - name: subscription_created_at
+        description: The date and time when the subscription was created. The new subscription becomes active upon creation and remains so until it is canceled.
+        tests:
+          - not_null
+      - name: subscription_plan_start
+        description: The start date of the current subscription term.
+        tests:
+          - not_null
+      - name: subscription_plan_end
+        description: The end date of the current subscription term.
+        tests:
+          - not_null
+      - name: cancel_schedule_created_at
+        description: The date when the subscription cancellation was scheduled, if applicable.
+      - name: subscription_cancelled_at
+        description: The date when the subscription was cancelled, if applicable.
+
+  - name: int_monthly_subscription_revenue
+    description: >
+      test
+    columns:
+      - name: month
+        description: test
+        tests:
+          - not_null
+      - name: id
+        description: test
+        tests:
+          - not_null
+      - name: business_id
+        description: FK mapping to the stg_business table.
+        tests:
+          - not_null
+      - name: item_id
+        description: FK mapping to the stg_subscriptions_items table.
+        tests:
+          - not_null
+      - name: channel
+        description: The channel through which the subscription was purchased (e.g., Apple App Store, Google Play Store).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["web", "app_store", "play_store"]
+      - name: country
+        description: In which country the subscription was created, aligns with business country.
+        tests:
+          - accepted_values:
+              values: ["CA", "US", "NA"]
+      - name: currency_code
+        description: The currency code of the country.
+        tests:
+          - accepted_values:
+              values: ["CAD", "USD"]
+      - name: fx_rate_cad_usd
+        description: The currency exchange from CAD to USD.
+      - name: billing_period_unit
+        description: The billing period.
+        tests:
+          - accepted_values:
+              values: ["year", "month"]
+      - name: monthly_price
+        description: The monthly price.
+        tests:
+          - not_null
+      - name: months_between
+        description: The number of months the subscription has been active for. If still active, using 2025-02-17 instead of current_date().
+        tests:
+          - not_null
+      - name: subscription_created_at
+        description: The date and time when the subscription was created. The new subscription becomes active upon creation and remains so until it is canceled.
+        tests:
+          - not_null
+      - name: subscription_plan_start
+        description: The start date of the current subscription term.
+        tests:
+          - not_null
+      - name: subscription_plan_end
+        description: The end date of the current subscription term.
+        tests:
+          - not_null
+      - name: cancel_schedule_created_at
+        description: The date when the subscription cancellation was scheduled, if applicable.
+      - name: subscription_cancelled_at
+        description: The date when the subscription was cancelled, if applicable.
+      - name: monthly_revenue_usd
+        description: Monthly revenue per subscription. Equals price * months_between
+        tests:
+          - not_null

@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: dim_subscription_items
+    description: >
+      Mart model that contains itemized data associated with each subscription, capturing plan-specific
+      details such as billing frequency and pricing. This table enables pricing and plan
+      mix analyses at a granular level.
+    columns:
+      - name: id
+        description: Primary key representative of the raw_subscription_items table. Refers to one row per subscription item.
+        tests:
+          - unique
+          - not_null
+      - name: unit_type
+        description: The subscription plan.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["premium_monthly_web", "premium_monthly_iOS", "premium_monthly_android", "premium_annual_web", "premium_annual_iOS"]
+      - name: billing_period_unit
+        description: The unit of time for the billing period (month or year).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["month", "year"]
+      - name: unit_price
+        description: The price charged at this subscription plan.
+        tests:
+          - not_null

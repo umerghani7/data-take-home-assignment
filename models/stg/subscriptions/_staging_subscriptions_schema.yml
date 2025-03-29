@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: stg_subscriptions
+    description: >
+      Staging model that contains records for individual businesses, including their country of operation,
+      organizational structure, and classification types.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: subscription_created_at <= subscription_cancelled_at
+    columns:
+      - name: id
+        description: A unique identifier for each subscription.
+        tests:
+          - unique
+          - not_null
+      - name: business_id
+        description: FK mapping to the raw_business table.
+        tests:
+          - not_null
+      - name: status
+        description: The current status of the subscription (e.g., active, cancelled).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["cancelled", "non_renewing", "active"]
+      - name: channel
+        description: The channel through which the subscription was purchased (e.g., Apple App Store, Google Play Store).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["web", "app_store", "play_store"]
+      - name: country
+        description: In which country the subscription was created, aligns with business country.
+        tests:
+          - accepted_values:
+              values: ["CA", "US", null]
+      - name: currency_code
+        description: The currency code of the country.
+        tests:
+          - accepted_values:
+              values: ["CAD", "USD"]
+      - name: fx_rate_cad_usd
+        description: The currency exchance from CAD to USD.
+      - name: subscription_created_at
+        description: The date and time when the subscription was created. The new subscription becomes active upon creation and remains so until it is canceled.
+        tests:
+          - not_null
+      - name: subscription_plan_start
+        description: The start date of the current subscription term.
+        tests:
+          - not_null
+      - name: subscription_plan_end
+        description: The end date of the current subscription term.
+        tests:
+          - not_null
+      - name: cancel_schedule_created_at
+        description: The date when the subscription cancellation was scheduled, if applicable.
+      - name: subscription_cancelled_at
+        description: The date when the subscription was cancelled, if applicable.
+      - name: exchange_rate
+        description: The exchange rate applied for currency conversion, if applicable.
+
+  - name: stg_subscriptions_items
+    description: >
+      Staging model that contains itemized data associated with each subscription, capturing plan-specific
+      details such as billing frequency and pricing. This table enables pricing and plan
+      mix analyses at a granular level.
+    columns:
+      - name: id
+        description: Primary key representative of the raw_subscription_items table. Refers to one row per subscription item.
+        tests:
+          - unique
+          - not_null
+      - name: unit_type
+        description: The subscription plan.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["premium_monthly_web", "premium_monthly_iOS", "premium_monthly_android", "premium_annual_web", "premium_annual_iOS"]
+      - name: billing_period_unit
+        description: The unit of time for the billing period (month or year).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["month", "year"]
+      - name: unit_price
+        description: The price charged at this subscription plan.
+        tests:
+          - not_null

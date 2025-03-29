@@ -25,7 +25,7 @@ WITH Base AS (
   s.subscription_cancelled_at,
 
 FROM {{ ref('stg_subscriptions') }} AS s
-LEFT JOIN `testing-project-454720.testing_datalake.raw_subscription_items` AS si
+LEFT JOIN {{ ref('raw_subscription_items') }}  AS si
   ON s.item_id = CAST(si.id AS STRING)
 
 WHERE DATE(s.subscription_created_at) BETWEEN DATE('2024-01-01') AND DATE('2025-02-01')
@@ -33,5 +33,5 @@ WHERE DATE(s.subscription_created_at) BETWEEN DATE('2024-01-01') AND DATE('2025-
 
 SELECT 
 *,
-months_between * monthly_price * fx_rate_cad_usd AS monthly_revenue_usd
+ROUND(months_between * monthly_price * fx_rate_cad_usd, 0) AS monthly_revenue_usd
 FROM Base

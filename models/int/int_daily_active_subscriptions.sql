@@ -13,7 +13,7 @@ SELECT
   s.cancel_schedule_created_at,
   s.subscription_cancelled_at
 FROM {{ ref('dim_dates') }} AS d
-JOIN `testing-project-454720.testing_datalake.stg_subscriptions` AS s
+JOIN {{ ref('stg_subscriptions') }}  AS s
   ON DATE(d.date_day) BETWEEN DATE(s.subscription_created_at)
 -- If null means still active, give it a large date
                          AND DATE(IFNULL(s.subscription_cancelled_at, '9999-12-31'))  

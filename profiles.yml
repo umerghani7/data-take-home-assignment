@@ -7,4 +7,4 @@ hometask:
       project: testing-project-454720
       dataset: testing_datalake
       threads: 4 # Must be a value of 1 or greater
-      keyfile:
+      keyfile: /Users/umer.ghani/Documents/data-take-home-assignment/service_account.json

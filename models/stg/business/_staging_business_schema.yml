@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: stg_business
+    description: >
+      Staging model that contains records for individual businesses, including their country of operation,
+      organizational structure, and classification types.
+    columns:
+      - name: id
+        description: >
+          Staging model that contains records for individual businesses, including their country of operation,
+          organizational structure, and classification types.
+        tests:
+          - not_null
+          - unique
+      - name: create_date
+        description: The date when the business record was created.
+        tests:
+          - not_null
+      - name: country
+        description: The country where the business is located.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["us", "can"]
+      - name: organizational_type
+        description: The category of the organization's structure.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Corporation", "Limited Partnership", "Sole Proprietorship"]
+      - name: type
+        description: The primary classification of the business.
+        tests:
+          - not_null
+      - name: subtype
+        description: A more specific classification within the primary business type.
+        tests:
+          - not_null

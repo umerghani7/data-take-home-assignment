@@ -1,0 +1,131 @@
+version: 2
+
+models:
+  - name: prd_daily_subscriptions_active_users
+    description: >
+      test
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: active_subscriptions = active_subscriptions_US + active_subscriptions_CA + active_subscriptions_NA
+      - dbt_utils.expression_is_true:
+          expression: active_subscriptions = active_subscriptions_web + active_subscriptions_app_store + active_subscriptions_play_store
+    columns:
+      - name: date_day
+        description: The Date. This serves as the PK.
+        tests:
+          - not_null
+          - unique
+      - name: active_subscriptions
+        description: total amount of active subscriptions.
+        tests:
+          - not_null
+      - name: active_subscriptions_US
+        description: total amount of active subscriptions in US.
+        tests:
+          - not_null
+      - name: active_subscriptions_CA
+        description: total amount of active subscriptions in CA.
+        tests:
+          - not_null
+      - name: active_subscriptions_NA
+        description: total amount of active subscriptions with N/A.
+        tests:
+          - not_null
+      - name: active_subscriptions_web
+        description: total amount of active subscriptions on the web.
+        tests:
+          - not_null
+      - name: active_subscriptions_app_store
+        description: total amount of active subscriptions on the app_store.
+        tests:
+          - not_null
+      - name: active_subscriptions_play_store
+        description: total amount of active subscriptions on the play store.
+        tests:
+          - not_null
+
+  - name: prd_daily_subscriptions_churn
+    description: >
+      test
+    columns:
+      - name: date_day
+        description: The Date. This serves as the PK.
+        tests:
+          - not_null
+          - unique
+      - name: churn_triggers
+        description: Number of churn triggers on a given day. Determined by cancel_schedule_created_at.
+        tests:
+          - not_null
+      - name: churns
+        description: Number of churn triggers on a given day. Determined by subscription_cancelled_at.
+        tests:
+          - not_null
+
+  - name: prd_monthly_subscriptions_revenue
+    description: >
+      test
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: monthly_revenue_usd = monthly_revenue_usd_US + monthly_revenue_usd_CA + monthly_revenue_usd_NA
+      - dbt_utils.expression_is_true:
+          expression: monthly_revenue_usd = monthly_revenue_usd_web + monthly_revenue_usd_app_store + monthly_revenue_usd_play_store
+    columns:
+      - name: month
+        description: The given month. This serves as the PK.
+        tests:
+          - not_null
+          - unique
+      - name: monthly_revenue_usd
+        description: The total monthly revenue in USD.
+      - name: monthly_revenue_usd_US
+        description: The monthly revenue in USD from USA.
+        tests:
+          - not_null
+      - name: monthly_revenue_usd_CA
+        description: The monthly revenue in USD from CA.
+        tests:
+          - not_null
+      - name: monthly_revenue_usd_NA
+        description: The monthly revenue in USD from unknown country.
+        tests:
+          - not_null
+      - name: monthly_revenue_usd_web
+        description: The monthly revenue in USD from web.
+        tests:
+          - not_null
+      - name: monthly_revenue_usd_app_store
+        description: The monthly revenue in USD from app store.
+        tests:
+          - not_null
+      - name: monthly_revenue_usd_play_store
+        description: The monthly revenue in USD from play store.
+        tests:
+          - not_null
+
+  - name: prd_monthly_subscriptions_revenue_breakdown
+    description: >
+      test
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: 100 = monthly_revenue_usd_US_ratio + monthly_revenue_usd_CA_ratio + monthly_revenue_usd_NA_ratio
+      - dbt_utils.expression_is_true:
+          expression: 100 = monthly_revenue_usd_web_ratio + monthly_revenue_usd_app_store_ratio + monthly_revenue_usd_play_store_ratio
+    columns:
+      - name: month
+        description: The given month. This serves as the PK.
+        tests:
+          - not_null
+          - unique
+      - name: monthly_revenue_usd_US_ratio
+        description: Ratio of revenue coming from USA, in USD.
+      - name: monthly_revenue_usd_CA_ratio
+        description: Ratio of revenue coming from CA, in USD.
+      - name: monthly_revenue_usd_NA_ratio
+        description: Ratio of revenue coming from Unknown country, in USD.
+      - name: monthly_revenue_usd_web_ratio
+        description: Ratio of revenue coming from web, in USD.
+      - name: monthly_revenue_usd_app_store_ratio
+        description: Ratio of revenue coming from app_store, in USD.
+      - name: monthly_revenue_usd_play_store_ratio
+        description: Ratio of revenue coming from play store, in USD.
